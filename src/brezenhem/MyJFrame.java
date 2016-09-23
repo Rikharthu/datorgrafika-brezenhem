@@ -38,6 +38,8 @@ public class MyJFrame extends javax.swing.JFrame {
         jtfY2 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtaLogArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -88,6 +90,10 @@ public class MyJFrame extends javax.swing.JFrame {
 
         jLabel4.setText("Y2:");
 
+        jtaLogArea.setColumns(20);
+        jtaLogArea.setRows(5);
+        jScrollPane1.setViewportView(jtaLogArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -96,8 +102,8 @@ public class MyJFrame extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(jPanelCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBrezenhem, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnBrezenhem, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -117,17 +123,16 @@ public class MyJFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jtfY1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jtfY1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
                         .addComponent(btnBrezenhem, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -140,7 +145,10 @@ public class MyJFrame extends javax.swing.JFrame {
                             .addComponent(jtfX2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jtfY2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel4))))
+                            .addComponent(jLabel4))
+                        .addGap(12, 12, 12)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -154,10 +162,11 @@ public class MyJFrame extends javax.swing.JFrame {
 
     private void btnBrezenhemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrezenhemActionPerformed
         Graphics g=jPanelCanvas.getGraphics();
-        
-        g.drawLine(0,0,jPanelCanvas.getWidth(),jPanelCanvas.getHeight());
-        g.drawLine(0,jPanelCanvas.getHeight(),jPanelCanvas.getWidth(),0);
-        g.setColor(Color.red);
+        // refresh logging text area
+        jtaLogArea.setText("");
+//        g.drawLine(0,0,jPanelCanvas.getWidth(),jPanelCanvas.getHeight());
+//        g.drawLine(0,jPanelCanvas.getHeight(),jPanelCanvas.getWidth(),0);
+//        g.setColor(Color.red);
         
         int x1, x2, y1, y2, // linijas sakuma un beiguma punkti
                 xn, yn,     // iteratori
@@ -179,7 +188,8 @@ public class MyJFrame extends javax.swing.JFrame {
         yi=y2>y1?1:-1;
         
         // ievietot pirmo pikseli
-        drawPixel(xn,yn,g);
+//        drawPixel(xn,yn,g);
+        g.drawLine(xn,yn,xn,yn); 
         
         // Atkariba no dx un dy izmantojam dazadu risinoso parametru un asi
         if(dx>=dy){
@@ -188,24 +198,31 @@ public class MyJFrame extends javax.swing.JFrame {
             
             // Определяем Risinosais parametrs
             pn=2*dy-dx;    
-
+            
+            jtaLogArea.append(String.format("%d.)\tX: %d\tY: %d\tPn: %d\n", i,xn,yn,pn));
+            
             while (xn!=x2){
                 if (pn>=0){
+                     // ja pn>=0, tad d1>=d2
                     xn=xn+xi;
                     yn=yn+yi;
                     pn=pn+2*dy-2*dx;
                     i++;
                 } else {
+                    // d1<d2
                     xn=xn+xi;
                     pn=pn+2*dy;
                     i++;
                 }
-                drawPixel(xn,yn,g);
-//                g.drawRect(xn,yn,2,2);
+//                drawPixel(xn,yn,g);
+                g.drawLine(xn,yn,xn,yn);
+                jtaLogArea.append(String.format("%d.)\tX: %d\tY: %d\tPn: %d\n", i,xn,yn,pn));
               }
+            
         }
-        // ja pn>=0, tad d1>=d2
-        if(dy>dx){
+        // otra dala (majas darbs)
+        else // dx<dy
+        {
             // т.к. проекция на оси У больше чем проекция на Х
             // , то у одного Х может быть несколько У
             // => идём по оси У
@@ -213,7 +230,9 @@ public class MyJFrame extends javax.swing.JFrame {
             
             // Определяем Risinosais parametrs
             pn=2*dx-dy;
-
+            
+            jtaLogArea.append(String.format("%d.)\tX: %d\tY: %d\tPn: %d\n", i,xn,yn,pn));
+            
             while(yn!=y2){
               if (pn>=0){
                xn=xn+xi;
@@ -228,9 +247,9 @@ public class MyJFrame extends javax.swing.JFrame {
 
 
               }
-              drawPixel(xn,yn,g);
-//              g.drawRect(xn,yn,2,2);
-
+//              drawPixel(xn,yn,g);
+              g.drawLine(xn,yn,xn,yn);
+              jtaLogArea.append(String.format("%d.)\tX: %d\tY: %d\tPn: %d\n", i,xn,yn,pn));
             }
         }
         
@@ -287,6 +306,8 @@ public class MyJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanelCanvas;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jtaLogArea;
     private javax.swing.JTextField jtfX1;
     private javax.swing.JTextField jtfX2;
     private javax.swing.JTextField jtfY1;
